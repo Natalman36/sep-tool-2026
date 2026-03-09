@@ -122,6 +122,164 @@
   }
 
 
+
+  /* ── EXPLAIN SEP BANNER ── */
+  .explain-sep-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fffbea;
+    border: 1.5px solid #f0c040;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+  .explain-sep-banner:hover { background: #fff8d6; }
+  .explain-sep-banner .banner-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .banner-icon { font-size: 20px; flex-shrink: 0; }
+  .banner-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7a5c00;
+    font-family: 'Nunito', sans-serif;
+  }
+  .banner-sub {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #a07800;
+    margin-top: 1px;
+  }
+  .banner-cta {
+    font-size: 12px;
+    font-weight: 800;
+    color: #7a5c00;
+    background: #f0c040;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .banner-cta:hover { background: #e0b030; }
+  .agent-tip-pill {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-left: 6px;
+    vertical-align: middle;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* ── EXPLAIN SEP MODAL ── */
+  .explain-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    padding: 20px;
+  }
+  .explain-overlay.hidden { display: none; }
+  .explain-box {
+    background: white;
+    border-radius: 20px;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .explain-header {
+    background: #f0c040;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+  }
+  .explain-header-icon { font-size: 22px; }
+  .explain-header-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    color: #5a4000;
+  }
+  .explain-header-sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7a5c00;
+    margin-top: 1px;
+  }
+  .explain-body { padding: 24px 24px 20px; }
+  .explain-section-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+  .explain-script {
+    background: #f8f9fa;
+    border-left: 4px solid #f0c040;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #333;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+  .explain-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .explain-tip {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+  }
+  .explain-tip-icon { flex-shrink: 0; }
+  .explain-close {
+    width: 100%;
+    padding: 12px;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .explain-close:hover { background: var(--teal-dark); }
+
   /* ── PLAN TOGGLE ── */
   .plan-toggle {
     display: flex;
@@ -963,6 +1121,26 @@
 </style>
 </head>
 <body>
+
+
+<!-- ── EXPLAIN SEP MODAL ── -->
+<div class="explain-overlay hidden" id="explainModal">
+  <div class="explain-box">
+    <div class="explain-header">
+      <span class="explain-header-icon">💬</span>
+      <div>
+        <div class="explain-header-title" id="explainTitle">Explain SEP to Beneficiary</div>
+        <div class="explain-header-sub" id="explainSub">Suggested language if the beneficiary seems uncertain or confused</div>
+      </div>
+    </div>
+    <div class="explain-body">
+      <div class="explain-section-label" id="explainScriptLabel">📋 Suggested Language</div>
+      <div class="explain-script" id="explainScript"></div>
+      <div class="explain-tips hidden-tips" id="explainTips" style="display:none;"></div>
+      <button class="explain-close" id="explainCloseBtn" onclick="closeExplain()">Got it — Back to Questions</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── SEP INDEX MODAL ── -->
 <div class="sep-index-overlay hidden" id="sepIndexModal">
@@ -2089,23 +2267,41 @@ function renderIntro(stage) {
 
 function renderQuestion(stage, sep) {
   const qText = sep.q[currentLang] || sep.q.en;
+  const es = currentLang === 'es';
+  const isMapd = planMode === 'mapd';
+  const bannerText    = es ? 'El beneficiario no sabe qué es un SEP?' : 'Beneficiary seems unsure what an SEP is?';
+  const bannerSub     = es ? 'Toque para ver el lenguaje sugerido para explicárselo' : 'Tap for suggested language to explain it to them';
+  const bannerBtn     = es ? 'Explicar SEP →' : 'Explain SEP →';
+  const agentTipLabel = es ? 'Consejo' : 'Agent Tip';
+
   stage.innerHTML = `
     <div class="headline">
-      <h1>Ask until you receive a<span class="yes"> Yes!</span></h1>
+      <h1>${es ? 'Pregunte hasta recibir un' : 'Ask until you receive a'}<span class="yes"> ${es ? '¡Sí!' : 'Yes!'}</span></h1>
     </div>
     <div class="question-card card-relative">
       <div class="wc-logo"><span>Well<br>Care</span></div>
-      <div class="question-num">SEP Question ${sep.num} of ${SEPs.length}</div>
+      <div class="question-num">${es ? 'Pregunta SEP' : 'SEP Question'} ${sep.num} ${es ? 'de' : 'of'} ${SEPs.length}</div>
       <div class="question-text">${sep.num}.) &nbsp;${qText}</div>
       <div class="btn-row">
-        <button class="btn-yes" onclick="handleAnswer(true)">Yes</button>
-        <button class="btn-no" onclick="handleAnswer(false)">No</button>
+        <button class="btn-yes" onclick="handleAnswer(true)">${es ? 'Sí' : 'Yes'}</button>
+        <button class="btn-no" onclick="handleAnswer(false)">${es ? 'No' : 'No'}</button>
       </div>
+      ${isMapd ? `
+      <div class="explain-sep-banner" onclick="openExplain()">
+        <div class="banner-left">
+          <span class="banner-icon">💬</span>
+          <div>
+            <div class="banner-text">${bannerText} <span class="agent-tip-pill">${agentTipLabel}</span></div>
+            <div class="banner-sub">${bannerSub}</div>
+          </div>
+        </div>
+        <button class="banner-cta" onclick="event.stopPropagation(); openExplain()">${bannerBtn}</button>
+      </div>` : ''}
     </div>
     <div class="nav-bar">
-      <button class="btn-nav" onclick="goBack()" ${currentStep === 0 ? 'disabled' : ''}>◀ BACK</button>
-      <button class="btn-nav" onclick="openSepIndex()" style="background:#00a89d;color:white;">📋 INDEX</button>
-      <button class="btn-nav btn-restart" onclick="restart()">↺ RESTART</button>
+      <button class="btn-nav" onclick="goBack()" ${currentStep === 0 ? 'disabled' : ''}>◀ ${es ? 'REGRESAR' : 'BACK'}</button>
+      <button class="btn-nav" onclick="openSepIndex()" style="background:#00a89d;color:white;">📋 ${es ? 'ÍNDICE' : 'INDEX'}</button>
+      <button class="btn-nav btn-restart" onclick="restart()">↺ ${es ? 'REINICIAR' : 'RESTART'}</button>
     </div>
   `;
 }
@@ -2269,6 +2465,69 @@ function backToQuestion() {
   render();
 }
 
+
+const sepScripts = {
+  2: { en: `"Since you're new to Medicare, you have a Special Enrollment Period — or SEP — that gives you a window of time to choose a Medicare Advantage plan when you first become eligible. This is your opportunity to get coverage that fits your needs right from the start."`, es: `"Como es nuevo en Medicare, tiene un Período de Inscripción Especial — o SEP — que le da un tiempo específico para elegir un plan Medicare Advantage cuando se vuelve elegible por primera vez. Esta es su oportunidad de obtener cobertura que se adapte a sus necesidades desde el principio."` },
+  3: { en: `"Since you already have Part A and just signed up for Part B, you have a Special Enrollment Period that allows you to join a Medicare Advantage plan now that both parts of your Medicare are active. You have a limited window to make this election, so let's make sure we find the right plan for you."`, es: `"Como ya tiene la Parte A y acaba de inscribirse en la Parte B, tiene un Período de Inscripción Especial que le permite unirse a un plan Medicare Advantage ahora que ambas partes de su Medicare están activas. Tiene un tiempo limitado para hacer esta elección, así que asegurémonos de encontrar el plan correcto para usted."` },
+  4: { en: `"Even though you had Medicare before, now that you're turning 65 you have a new Special Enrollment Period that gives you the opportunity to enroll in a Medicare Advantage plan. This is a fresh enrollment window tied specifically to this life event."`, es: `"Aunque ya tenía Medicare antes, ahora que está cumpliendo 65 años tiene un nuevo Período de Inscripción Especial que le da la oportunidad de inscribirse en un plan Medicare Advantage. Esta es una nueva ventana de inscripción vinculada específicamente a este evento de vida."` },
+  5: { en: `"Because you are moving into, currently living in, or recently moved out of a long-term care facility, you qualify for a Special Enrollment Period. This SEP is designed to make sure people in your situation have access to the right Medicare coverage during that transition."`, es: `"Debido a que se está mudando a, vive actualmente en, o se mudó recientemente de un centro de cuidado a largo plazo, califica para un Período de Inscripción Especial. Este SEP está diseñado para asegurarse de que las personas en su situación tengan acceso a la cobertura de Medicare adecuada durante esa transición."` },
+  6: { en: `"Because you recently moved out of a long-term care facility such as a nursing home or rehab center, you qualify for a Special Enrollment Period. This gives you the opportunity to choose a Medicare Advantage plan now that you are transitioning back to community living."`, es: `"Debido a que se mudó recientemente de un centro de cuidado a largo plazo, como un asilo o un centro de rehabilitación, califica para un Período de Inscripción Especial. Esto le da la oportunidad de elegir un plan Medicare Advantage ahora que está haciendo la transición de regreso a la comunidad."` },
+  7: { en: `"Because you were notified about your Medicare eligibility after your coverage had already started, you qualify for a Special Enrollment Period. This SEP exists so you are not penalized for missing an enrollment window you weren't aware of."`, es: `"Debido a que recibió la notificación de su elegibilidad de Medicare después de que su cobertura ya había comenzado, califica para un Período de Inscripción Especial. Este SEP existe para que no sea penalizado por perder una ventana de inscripción de la que no estaba al tanto."` },
+  8: { en: `"Because you recently moved, either out of your current plan's service area or to an area where a new plan is available to you, you qualify for a Special Enrollment Period. This gives you the opportunity to choose a plan that covers your new location."`, es: `"Debido a que se mudó recientemente, ya sea fuera del área de servicio de su plan actual o a un área donde hay un nuevo plan disponible para usted, califica para un Período de Inscripción Especial. Esto le da la oportunidad de elegir un plan que cubra su nueva ubicación."` },
+  9: { en: `"Because you recently returned to the United States after living permanently outside of the country, you qualify for a Special Enrollment Period. This SEP gives you the opportunity to enroll in Medicare Advantage coverage now that you are back in the U.S."`, es: `"Debido a que regresó recientemente a los Estados Unidos después de haber vivido permanentemente fuera del país, califica para un Período de Inscripción Especial. Este SEP le da la oportunidad de inscribirse en una cobertura Medicare Advantage ahora que está de regreso en los EE.UU."` },
+  10: { en: `"Because you were recently released from incarceration, you qualify for a Special Enrollment Period that gives you the opportunity to enroll in a Medicare Advantage plan. This ensures you have access to healthcare coverage as you transition back into the community."`, es: `"Debido a que fue liberado recientemente de la cárcel, califica para un Período de Inscripción Especial que le da la oportunidad de inscribirse en un plan Medicare Advantage. Esto garantiza que tenga acceso a cobertura médica mientras hace la transición de regreso a la comunidad."` },
+  11: { en: `"Because you recently obtained lawful presence status in the United States, you now qualify for Medicare and have a Special Enrollment Period to enroll in a Medicare Advantage plan. This is your opportunity to get coverage now that you are eligible."`, es: `"Debido a que obtuvo recientemente estatus legal en los Estados Unidos, ahora califica para Medicare y tiene un Período de Inscripción Especial para inscribirse en un plan Medicare Advantage. Esta es su oportunidad de obtener cobertura ahora que es elegible."` },
+  12: { en: `"Because you recently lost drug coverage that was considered as good as Medicare — what's called creditable coverage — you qualify for a Special Enrollment Period to join a plan that includes prescription drug coverage. This SEP protects you from a gap in your medication coverage."`, es: `"Debido a que perdió recientemente cobertura de medicamentos que se consideraba tan buena como la de Medicare — lo que se llama cobertura acreditable — califica para un Período de Inscripción Especial para unirse a un plan que incluya cobertura de medicamentos recetados. Este SEP lo protege de una brecha en su cobertura de medicamentos."` },
+  13: { en: `"Because you are leaving your employer or union coverage, including COBRA, you qualify for a Special Enrollment Period. This gives you the opportunity to transition into a Medicare Advantage plan without a gap in your coverage."`, es: `"Debido a que va a dejar su cobertura médica del empleador o sindicato, incluyendo COBRA, califica para un Período de Inscripción Especial. Esto le da la oportunidad de hacer la transición a un plan Medicare Advantage sin una brecha en su cobertura."` },
+  14: { en: `"Because Medicare ended its contract with your current plan, you qualify for a Special Enrollment Period. This gives you the opportunity to choose a new Medicare Advantage plan so you are not left without coverage."`, es: `"Debido a que Medicare rescindió su contrato con su plan actual, califica para un Período de Inscripción Especial. Esto le da la oportunidad de elegir un nuevo plan Medicare Advantage para que no se quede sin cobertura."` },
+  15: { en: `"Because you currently have Part D drug coverage through a Medicare Advantage plan and want to switch to a standalone drug plan, you qualify for a Special Enrollment Period to make that change outside of the normal enrollment window."`, es: `"Debido a que actualmente tiene cobertura de medicamentos Parte D a través de un plan Medicare Advantage y desea cambiarse a un plan de medicamentos independiente, califica para un Período de Inscripción Especial para hacer ese cambio fuera de la ventana de inscripción normal."` },
+  16: { en: `"Because your current Medicare Advantage plan is ending its contract with Medicare or leaving your area, you qualify for a Special Enrollment Period. This gives you the opportunity to choose a new plan before your current coverage ends."`, es: `"Debido a que su plan Medicare Advantage actual está finalizando su contrato con Medicare o saliendo de su área, califica para un Período de Inscripción Especial. Esto le da la oportunidad de elegir un nuevo plan antes de que termine su cobertura actual."` },
+  17: { en: `"Because you recently left a PACE program, you qualify for a Special Enrollment Period to enroll in a Medicare Advantage plan. PACE provides all-inclusive coordinated care, so leaving it is a significant change — this SEP makes sure you don't have a gap in your coverage."`, es: `"Debido a que dejó recientemente un programa PACE, califica para un Período de Inscripción Especial para inscribirse en un plan Medicare Advantage. PACE proporciona atención coordinada integral, por lo que dejarlo es un cambio significativo — este SEP se asegura de que no tenga una brecha en su cobertura."` },
+  18: { en: `"Because you are currently in a Special Needs Plan but have lost the qualifying condition that made you eligible for it, you qualify for a Special Enrollment Period to move to a different plan that better fits your current situation."`, es: `"Debido a que está actualmente en un Plan de Necesidades Especiales pero ha perdido la condición calificadora que lo hacía elegible para él, califica para un Período de Inscripción Especial para cambiarse a un plan diferente que se adapte mejor a su situación actual."` },
+  19: { en: `"Because you have a qualifying chronic condition — such as cardiovascular disease, chronic heart failure, or diabetes — you may be eligible for a Special Needs Plan designed specifically around your condition. This SEP gives you the opportunity to enroll in a plan that tailors its benefits to your health needs."`, es: `"Debido a que tiene una condición crónica calificadora — como enfermedad cardiovascular, insuficiencia cardíaca crónica o diabetes — puede ser elegible para un Plan de Necesidades Especiales diseñado específicamente para su condición. Este SEP le da la oportunidad de inscribirse en un plan que adapta sus beneficios a sus necesidades de salud."` },
+  20: { en: `"Because you were found ineligible for a Chronic Special Needs Plan, you qualify for a Special Enrollment Period to enroll into a different Medicare Advantage plan that is available in your area."`, es: `"Debido a que se le consideró no elegible para un Plan de Necesidades Especiales Crónicas, califica para un Período de Inscripción Especial para inscribirse en un plan Medicare Advantage diferente disponible en su área."` },
+  21: { en: `"Because you recently had a change in your Medicaid status — whether you newly gained Medicaid, had a change in your level of coverage, or lost Medicaid — you qualify for a Special Enrollment Period. This SEP ensures you can adjust your Medicare plan to match your current Medicaid situation."`, es: `"Debido a que recientemente tuvo un cambio en su estado de Medicaid — ya sea que obtuvo Medicaid recientemente, tuvo un cambio en su nivel de cobertura o perdió Medicaid — califica para un Período de Inscripción Especial. Este SEP garantiza que pueda ajustar su plan de Medicare para que coincida con su situación actual de Medicaid."` },
+  22: { en: `"Because you are enrolled in a WellCare or Centene Medicaid plan and wish to move into a fully integrated dual eligible special needs plan, you qualify for a Special Enrollment Period. This SEP is designed to help members like you get coordinated Medicare and Medicaid coverage under one plan."`, es: `"Debido a que está inscrito en un plan de Medicaid de WellCare o Centene y desea cambiarse a un plan de necesidades especiales dual totalmente integrado, califica para un Período de Inscripción Especial. Este SEP está diseñado para ayudar a miembros como usted a obtener cobertura coordinada de Medicare y Medicaid bajo un solo plan."` },
+  23: { en: `"Because you recently had a change in your Extra Help status — also known as the Low Income Subsidy — you qualify for a Special Enrollment Period. This gives you the opportunity to choose a plan that best fits your updated level of prescription drug assistance."`, es: `"Debido a que recientemente hubo un cambio en su estado de Ayuda Adicional — también conocida como el Subsidio de Bajos Ingresos — califica para un Período de Inscripción Especial. Esto le da la oportunidad de elegir un plan que se adapte mejor a su nivel actualizado de asistencia para medicamentos recetados."` },
+  24: { en: `"Because you were automatically enrolled in a plan by Medicare or your state and would like to choose a different plan that better fits your needs, you qualify for a Special Enrollment Period to make that switch."`, es: `"Debido a que fue inscrito automáticamente en un plan por Medicare o su estado y le gustaría elegir un plan diferente que se adapte mejor a sus necesidades, califica para un Período de Inscripción Especial para hacer ese cambio."` },
+  25: { en: `"Because you are enrolled in a qualified State Pharmaceutical Assistance Program, or SPAP, you qualify for a Special Enrollment Period that allows you to enroll in or switch to a Medicare plan that works alongside your state drug assistance benefits."`, es: `"Debido a que está inscrito en un Programa Estatal de Asistencia Farmacéutica calificado, o SPAP, califica para un Período de Inscripción Especial que le permite inscribirse o cambiarse a un plan de Medicare que funcione junto con sus beneficios estatales de asistencia para medicamentos."` },
+  26: { en: `"Because you are losing your benefits from a State Pharmaceutical Assistance Program, you qualify for a Special Enrollment Period. This SEP gives you the opportunity to choose a Medicare Advantage plan that can help fill the gap left by the loss of that assistance."`, es: `"Debido a que está perdiendo sus beneficios de un Programa Estatal de Asistencia Farmacéutica, califica para un Período de Inscripción Especial. Este SEP le da la oportunidad de elegir un plan Medicare Advantage que pueda ayudar a cubrir la brecha dejada por la pérdida de esa asistencia."` },
+  27: { en: `"Because you were impacted by a federally or state-declared emergency or major disaster, and that situation caused you to miss a Medicare enrollment period you would have otherwise used, you qualify for a Special Enrollment Period. This SEP ensures you are not penalized for circumstances beyond your control."`, es: `"Debido a que se vio afectado por una emergencia o desastre mayor declarado a nivel federal o estatal, y esa situación le impidió usar un período de inscripción de Medicare que de otro modo habría utilizado, califica para un Período de Inscripción Especial. Este SEP garantiza que no sea penalizado por circunstancias fuera de su control."` },
+  28: { en: `"Because you are enrolling in a Medicare plan that has earned a 5-star quality rating, you qualify for a Special Enrollment Period. Medicare allows this one-time opportunity per year because 5-star plans represent the highest level of quality and member satisfaction."`, es: `"Debido a que se está inscribiendo en un plan de Medicare que ha obtenido una calificación de calidad de 5 estrellas, califica para un Período de Inscripción Especial. Medicare permite esta oportunidad única por año porque los planes de 5 estrellas representan el más alto nivel de calidad y satisfacción de los miembros."` },
+  29: { en: `"Because you are enrolled in a plan that has received a star rating of less than 3 stars for the past 3 years, Medicare gives you a Special Enrollment Period to switch to a higher-quality plan. This is your opportunity to move to a plan with better performance ratings."`, es: `"Debido a que está inscrito en un plan que ha recibido una calificación de estrellas de menos de 3 estrellas durante los últimos 3 años, Medicare le da un Período de Inscripción Especial para cambiarse a un plan de mayor calidad. Esta es su oportunidad de pasarse a un plan con mejores calificaciones de desempeño."` },
+  30: { en: `"Because your current plan has been taken over by the state due to financial issues — what is called receivership — you qualify for a Special Enrollment Period. This gives you the opportunity to choose a stable plan before your current coverage is affected."`, es: `"Debido a que su plan actual fue asumido por el estado debido a problemas financieros — lo que se llama administración judicial — califica para un Período de Inscripción Especial. Esto le da la oportunidad de elegir un plan estable antes de que su cobertura actual se vea afectada."` },
+  31: { en: `"Because you requested Medicare materials in an accessible format — such as large print or braille — but did not receive them in time to make an informed enrollment decision, you qualify for a Special Enrollment Period. This SEP ensures that a communication barrier does not prevent you from getting the coverage you need."`, es: `"Debido a que solicitó materiales de Medicare en un formato accesible — como letra grande o braille — pero no los recibió a tiempo para tomar una decisión informada de inscripción, califica para un Período de Inscripción Especial. Este SEP garantiza que una barrera de comunicación no le impida obtener la cobertura que necesita."` },
+  32: { en: `"Because you pay a premium for Part A and enrolled in Part B during the General Enrollment Period, you qualify for a Special Enrollment Period to also enroll in a Medicare Advantage plan. This SEP runs alongside your Part B enrollment to make sure your full Medicare coverage can start together."`, es: `"Debido a que paga una prima por la Parte A y se inscribió en la Parte B durante el Período de Inscripción General, califica para un Período de Inscripción Especial para inscribirse también en un plan Medicare Advantage. Este SEP corre junto con su inscripción en la Parte B para asegurarse de que su cobertura completa de Medicare pueda comenzar al mismo tiempo."` },
+  33: { en: `"Because you signed up for Part A or Part B during a Special Enrollment Period, you also qualify for a Special Enrollment Period to enroll in a Medicare Advantage plan. This ensures your drug and additional benefits coverage can align with your new Medicare start date."`, es: `"Debido a que se inscribió en la Parte A o la Parte B durante un Período de Inscripción Especial, también califica para un Período de Inscripción Especial para inscribirse en un plan Medicare Advantage. Esto garantiza que su cobertura de medicamentos y beneficios adicionales pueda alinearse con su nueva fecha de inicio de Medicare."` },
+};
+
+// ── EXPLAIN SEP ──
+function openExplain() {
+  const es = currentLang === 'es';
+
+  const sepNum = SEPs[currentStep] ? SEPs[currentStep].num : null;
+  const sepScriptData = sepNum && sepScripts[sepNum] ? sepScripts[sepNum] : null;
+  const script_en = sepScriptData ? sepScriptData.en : `"A Special Enrollment Period — or SEP — means that based on a qualifying life event, you may have a special opportunity to make a change to your Medicare plan today outside of the normal enrollment window."`;
+  const script_es = sepScriptData ? sepScriptData.es : `"Un Período de Inscripción Especial — o SEP — significa que, debido a un evento de vida calificador, puede tener una oportunidad especial para hacer un cambio en su plan de Medicare hoy, fuera de la ventana de inscripción normal."` ;
+
+
+
+  document.getElementById('explainTitle').textContent      = es ? 'Explicar SEP al Beneficiario' : 'Explain SEP to Beneficiary';
+  document.getElementById('explainSub').textContent        = es ? 'Lenguaje sugerido si el beneficiario parece inseguro o confundido' : 'Suggested language if the beneficiary seems uncertain or confused';
+  document.getElementById('explainScriptLabel').textContent = es ? '📋 Lenguaje Sugerido' : '📋 Suggested Language';
+  document.getElementById('explainScript').innerHTML       = es ? script_es : script_en;
+  document.getElementById('explainCloseBtn').textContent   = es ? 'Entendido — Volver a las Preguntas' : 'Got it — Back to Questions';
+
+
+
+  document.getElementById('explainModal').classList.remove('hidden');
+  document.querySelector('.explain-box').scrollTop = 0;
+}
+
+function closeExplain() {
+  document.getElementById('explainModal').classList.add('hidden');
+}
+
 function switchPlan(mode) {
   if (mode === planMode) return;
   planMode = mode;
@@ -2355,6 +2614,10 @@ function jumpToSep(idx) {
 }
 
 // Click outside index to close
+document.getElementById('explainModal').addEventListener('click', function(e) {
+  if (e.target === this) closeExplain();
+});
+
 document.getElementById('sepIndexModal').addEventListener('click', function(e) {
   if (e.target === this) closeSepIndex();
 });
